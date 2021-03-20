@@ -13,7 +13,7 @@ It accepts the following options:
 | `--upload_path=/path` | upload images to `/path` | `/home/pi/images` |
 
 ### Desktop
-`desktop/main.py` is intended to run on a more powerful desktop. It trains the model. The model file needs to be moved to the Pi.
+`desktop/main.ipynb` is intended to run on a more powerful desktop. It trains the model. The model file needs to be moved to the Pi.
 
 
 
@@ -28,4 +28,6 @@ It accepts the following options:
    - assuming they exceed the GitHub limits
    - I can host an FTP or webDEV server
  - collect dataset
- - develop the entire Keras model
+ - figure out way to feed RGB images into Keras
+   - instead of converting it to Numpy
+ - develop the Keras model layers
