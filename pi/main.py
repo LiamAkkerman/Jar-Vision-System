@@ -31,7 +31,7 @@ def capture_image(camera, save=True, path='/home/pi/images'):
     print(filename, 'captured')
 
     if save:
-        continue #TODO save it to the dataset folder in encoded format
+        pass #TODO save it to the dataset folder in encoded format
         # or change to save afterwards to allow the model to run first
 
     return filename # or should it return the data?
@@ -65,22 +65,37 @@ if __name__ is '__main__':
 
     button = Button(4) #button across GPIO4 to GND
 
+    # default options
     model = None
-    if '--collect' is in opts:
-        print('data collection mode, no model will run')
-    else:
+    collect_mode = False
+    save_mode = True
+    up_path = '/home/pi/images'
+
+    # parse command line options
+    while opts:
+        opt = opts.pop()
+        if opt is '--collect':
+            print('data collection mode, no model will run')
+            collect_mode = True
+            continue
+
+        if opt is '--dry':
+            print('dry run mode, not images will be saved')
+            save_mode = False
+            continue
+
+        if opt.startswith('--upload_path'):
+            up_path = opt.split("=", 1)[1]
+            print('upload path specified:', up_path)
+            continue
+
+        print('ERROR: unknown option,' opt)
+        raise(KeyError)
+
+    # load Keras model (if required)
+    if not collect_mode:
         model = keras.models.load_model('/home/pi/model.model') #TODO error handling, TODO pass model in args
         print('keras model loaded')
-
-    save_mode = True
-    if '--dry' is in opts:
-        print('dry run mode, not images will be saved')
-        save_mode = False
-
-    up_path = '/home/pi/images'
-    if any(opt.startswith('--upload_path') for opt in opts):
-        up_path = opt.split("=", 1)[1] for opt in opts if opt.startswith('--upload_path') #uh, it loops twice, it could just be one TODO I suppose
-
 
     # main loop
     while True:
