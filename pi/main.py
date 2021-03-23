@@ -2,10 +2,13 @@
 
 # imports
 from time import sleep
+from datetime import datetime
+import numpy as np
 import sys
 
 from picamera import PiCamera
-from gpiozero import Button
+import picamera.array
+# from gpiozero import Button
 
 # import tensorflow as tf
 # from tensorflow import keras
@@ -18,24 +21,15 @@ __version__ = '0.1'
 __status__ = 'Prototype'
 
 # function definitions
-def capture_image(camera, save=True, path='/home/pi/images'):
-    """ capture an image to feed to model and save into dataset
+def save_image(stream, path):
+    #filename = path + datetime.now().strftime('%Y%m%d%H%M%S') + '.npy'
+    filename = path + 'test' + datetime.now().strftime('%Y%m%d%H%M%S') + '.npy' # remove this line once testing is done
 
-    Keyword arguments:
-    camera -- the PiCamera object
-    save -- bool on if to save the image into the dataset (default True)
-    path -- path to save image to (default /home/pi/images)
-    """
+    with open(filename, 'wb') as f:
+        print(stream.array.shape)
+        np.save(f, stream.array, allow_pickle=True)
 
-    filename = 'foo.rgb' #TODO change to increment or something
-    camera.capture(filename, 'rgb', resize=(320, 320))
-    print(filename, 'captured')
-
-    if save:
-        pass #TODO save it to the dataset folder in encoded format
-        # or change to save afterwards to allow the model to run first
-
-    return filename # or should it return the data?
+    print(filename, 'written to file')
 
 def preprocess_image():
     return None
@@ -62,20 +56,21 @@ if __name__ == '__main__':
 
     # initialize camera
     camera = PiCamera()
-    camera.resolution = (720, 720) #TODO set the correct res and other settings
+    camera.resolution = (820, 616)
     sleep(2) # camera start up time
+    stream = picamera.array.PiRGBArray(camera)
     print('camera initialised')
 
     # initialize the hardware button
     # the button is used to take a photo and run the model
     # button across GPIO4 to GND
-    button = Button(4) 
+    # button = Button(4) 
 
     # default options
     model = None
     collect_mode = False
     save_mode = True
-    up_path = '/home/pi/images'
+    up_path = '/home/pi/images/'
 
     # parse command line options
     while opts:
@@ -107,15 +102,24 @@ if __name__ == '__main__':
     print('\nready!')
     # main loop
     while True:
-        button.wait_for_press()
-        capture_image(camera=camera, save=save_mode, path=up_path)
+        stream.truncate(0) #flushes the stream clean
+        #button.wait_for_press()
+        user_input = input("Press a key to take photo")
+        #stream = capture_image(camera=camera)
+        camera.capture(stream, 'rgb')
 
         if collect_mode:
-            sleep(2)
+            sleep(1)
         else:
             preprocess_image()
             run_model(model=model) 
-    
+
+        if save_mode:
+            save_image(stream, path=up_path)
+
+        if user_input.lower() == 'exit':
+            break
+
     camera.close()
-    #return None # this will never be reached. I'm not sure how this should be for python
+
 
