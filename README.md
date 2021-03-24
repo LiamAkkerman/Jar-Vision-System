@@ -18,16 +18,31 @@ It accepts the following options:
 
 
 ## TODO
- - implement camera
-   - camera hardware en route
+### Collect Data
+ - ~~develop pi software base~~
+ - ~~implement camera in software~~
  - build camera jig
- - develop preprocessing routine
- - develop results visualization
-   - could be canceled
- - develop method of storing dataset
-   - assuming they exceed the GitHub limits
-   - I can host an FTP or webDEV server
- - collect dataset
- - figure out way to feed RGB images into Keras
-   - instead of converting it to Numpy
- - develop the Keras model layers
+ - determine camera parameters
+ - take all the photos
+ - if the size is getting too big, find method of 
+### Process Data
+ - develop way to process photos
+   - crop, align, etc..
+   - goal would be uniformity
+ - develop a GUI to manually label correct coordinates
+   - pyplt can do this (but not in a jupyter notebook)
+ - develop method of storing the database of labeled images
+   - I think pickle will work for this in append binary mode
+ - manually process all the photos
+### Build Model
+ - read database and feed to Keras for training
+ - develop a Keras model
+ - save the model as an exportable format
+   - Keras can directly save a model
+   - TensorFlow Lite can save models for better performance
+### Run Model
+ - install tensorflow on the pi in some regard
+ - load model on the pi in python
+ - run the model inference
+ - output inference results
+   - outputting to console is fine but a graphic will be better
