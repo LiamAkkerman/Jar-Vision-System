@@ -14,7 +14,7 @@ def exit_dist(elem):
 
 data_type = np.uint8    # data type in the array. could be float for a 0 to 1 range, unless a keras layer will do that.
 max_value = np.iinfo(np.dtype(data_type)).max # an all-the-way on pixel  # lol why such complicated
-tray_side = 350         # the number of pixels on each edge of the tray
+tray_side = 500         # the number of pixels on each edge of the tray
 jar_dia = np.floor(tray_side/5.5) # the diameter of a jar in pixels. the 5.5 is an estimate
 print(jar_dia)
 
@@ -40,7 +40,7 @@ while equal_grid:
                 image[rr, cc] = max_value # write it onto the image
                 
 
-        dataset.append({'image': image, 'label': coords.copy(), 'testing': True})
+        dataset.append({'image': image, 'label': coords.copy(), 'filename': 'ideal_data_' + str(len(coords)), 'testing': True})
 
 # write to file and compress
 # using bz2 because the data is highly compressible 
