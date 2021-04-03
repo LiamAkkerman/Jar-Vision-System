@@ -85,6 +85,22 @@ plt.ion()
 
 file_list = glob('./desktop/set1/*.npy')
 archive_list = glob('./dataset/*.pkl.bz2')
+try:
+    archive_list.remove('./dataset\\test_data.pkl.bz2') # don't exclude the scratch-pad archive as done
+except ValueError:
+    pass 
+
+# remove files already in training archive from the list. hopefully this method doesn't get too slow when the dataset grows
+# hopefully this works on other system's glob
+for archive in archive_list:
+    with bz2.BZ2File(archive, mode='r') as f:
+        existing_dataset = pickle.load(f)
+        #for filename in [x['filename'] for x in existing_dataset if 'filename' in x.keys()]:
+        for filename in [x['filename'] for x in existing_dataset]:
+            try:
+                file_list.remove(filename)
+            except ValueError:
+                pass 
 
 centres = list()
 markers = list()
@@ -170,6 +186,7 @@ while not done_flag:
 
     print('image processed with', len(centres), 'centres')
     # save image and label into dataset
+    ## compact_name = image_name.replace('\\', '/').split('/')[-1]
     dataset.append({'image': image_cropped, 'label': centres.copy(), 'filename': image_name, 'testing': True})
 
 # save dataset to file
