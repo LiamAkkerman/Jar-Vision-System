@@ -26,11 +26,13 @@ It accepts the following options:
 8. continue until over
 9. press "Done" to save the labelled dataset to a file and exit
 
+ - every 10 images, it will autosave into an archive with "_autosave" appended
  - "Undo" will remove any + markers on screen
  - "Undo" will remove the last marked circle centre entirely if no + is present
  - "Undo" can only remove the one most recent circle centre and only from the current photo
  - if you need more undone, use "Clear" and restart the current photo
- - pressing "Next Photo" can not be undone and the data since the last save is ruined
+ - pressing "Next Photo" can not be undone and the data since the last autosave is ruined
+ - if a grievous error is made (like finishing an image with a mistake), exit the script and rely on the last autosave
  - "Clear" removes all marks and centres on a photo
  - "Done" will also record the marked centres, do not press "Done" with unmarked jars
  - pressing "Done" can be done at any time to save

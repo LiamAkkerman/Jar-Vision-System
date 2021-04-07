@@ -1,11 +1,18 @@
-# # import general libraries
+# import general libraries
 import numpy as np
+
+# import graphical libraries
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 from matplotlib.widgets import Button
+
+# import file I/O libraries
 from glob import glob
+from datetime import datetime
 import bz2
 import pickle
+from os import remove
+from os.path import exists
 
 def pts_to_centre(pts):
     '''
@@ -85,18 +92,13 @@ plt.ion()
 
 file_list = glob('./desktop/set1/*.npy')
 archive_list = glob('./dataset/*.pkl.bz2')
-try:
-    archive_list.remove('./dataset\\test_data.pkl.bz2') # don't exclude the scratch-pad archive as done
-except ValueError:
-    pass 
 
 # remove files already in training archive from the list. hopefully this method doesn't get too slow when the dataset grows
 # hopefully this works on other system's glob
 for archive in archive_list:
     with bz2.BZ2File(archive, mode='r') as f:
         existing_dataset = pickle.load(f)
-        #for filename in [x['filename'] for x in existing_dataset if 'filename' in x.keys()]:
-        for filename in [x['filename'] for x in existing_dataset]:
+        for filename in [x['filename'] for x in existing_dataset if x['testing'] is not True]:
             try:
                 file_list.remove(filename)
             except ValueError:
@@ -105,6 +107,7 @@ for archive in archive_list:
 centres = list()
 markers = list()
 dataset = list()
+archive_filename = 'dataset/archive_' + datetime.now().strftime('%Y%m%d%H%M%S')
 
 while not done_flag:
     next_image_flag = False
@@ -189,11 +192,20 @@ while not done_flag:
     ## compact_name = image_name.replace('\\', '/').split('/')[-1]
     dataset.append({'image': image_cropped, 'label': centres.copy(), 'filename': image_name, 'testing': True})
 
+    if len(dataset) % 10 == 0:
+        print('\nautosaving')
+        with bz2.BZ2File(archive_filename + '_autosave.pkl.bz2', mode='w') as f: # overwrites current autosave archive file
+            pickle.dump(dataset, f)
+        print(archive_filename + '_autosave.pkl.bz2', 'saved')
+
 # save dataset to file
 print('\nlabeled', len(dataset), 'images')
-archive_filename = 'dataset/test_data.pkl.bz2'
-with bz2.BZ2File(archive_filename, mode='w') as f:
+#archive_filename = 'dataset/test_data.pkl.bz2'
+with bz2.BZ2File(archive_filename + '.pkl.bz2', mode='w') as f:
     pickle.dump(dataset, f)
-print(archive_filename, 'saved')
+print(archive_filename + '.pkl.bz2', 'saved')
+if exists(archive_filename + '_autosave.pkl.bz2') and exists(archive_filename + '.pkl.bz2'):
+    remove(archive_filename + '_autosave.pkl.bz2')
+    print('removed autosave')
 print('exiting')
 
