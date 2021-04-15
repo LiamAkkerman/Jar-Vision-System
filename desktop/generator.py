@@ -74,6 +74,8 @@ undo_flag = False
 plt.clf()
 fig, ax = plt.subplots()
 plt.subplots_adjust(right=0.85)
+plt.xlim([0, 500])
+plt.ylim([0, 500])
 
 ax_next = plt.axes([0.82, 0.50, 0.15, 0.08])
 ax_undo = plt.axes([0.82, 0.35, 0.15, 0.08])
@@ -90,7 +92,7 @@ bdone.on_clicked(done_b)
 
 plt.ion()
 
-file_list = glob('./desktop/set1/*.npy')
+file_list = glob('./dataset/*.npy')
 archive_list = glob('./dataset/*.pkl.bz2')
 
 # remove files already in training archive from the list. hopefully this method doesn't get too slow when the dataset grows
@@ -120,8 +122,9 @@ while not done_flag:
     image_name = file_list.pop()
     print('\nnext image:', image_name)
     image = np.load(image_name, allow_pickle=True)
-    image_cropped = image.copy()[99:599, 236:736, :] # crop image
-    ax.imshow(image_cropped)
+    image_cropped = image.copy()[79:579, 236:736, :] # crop image
+    assert(image_cropped.shape == (500, 500, 3)) # check that the cropped size is right
+    ax_image = ax.imshow(image_cropped)
 
     while not (next_image_flag or done_flag):
         undo_flag = False
@@ -129,8 +132,8 @@ while not done_flag:
         while len(pts) < 3 and not (next_image_flag or done_flag or undo_flag):
             point = list()
 
-            point = plt.ginput(1, timeout=0.5)  # buttons will work right away but more resource heavy
-            # point = plt.ginput(1, timeout=-1) # an extra click is needed to flush but better performance
+            # point = plt.ginput(1, timeout=0.5)  # buttons will work right away but more resource heavy
+            point = plt.ginput(1, timeout=-1) # an extra click is needed to flush but better performance
             
             if point: # conditional is just for timeout mode
                 point = point[0]
@@ -190,13 +193,15 @@ while not done_flag:
     print('image processed with', len(centres), 'centres')
     # save image and label into dataset
     ## compact_name = image_name.replace('\\', '/').split('/')[-1]
-    dataset.append({'image': image_cropped, 'label': centres.copy(), 'filename': image_name, 'testing': True})
+    dataset.append({'image': image_cropped, 'label': centres.copy(), 'filename': image_name, 'testing': False})
 
     if len(dataset) % 10 == 0:
         print('\nautosaving')
         with bz2.BZ2File(archive_filename + '_autosave.pkl.bz2', mode='w') as f: # overwrites current autosave archive file
             pickle.dump(dataset, f)
         print(archive_filename + '_autosave.pkl.bz2', 'saved')
+    
+    ax_image.remove() # clear the old image to improve performance
 
 # save dataset to file
 print('\nlabeled', len(dataset), 'images')
