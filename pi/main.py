@@ -23,10 +23,9 @@ __status__ = 'Prototype'
 # function definitions
 def save_image(stream, path):
     #filename = path + datetime.now().strftime('%Y%m%d%H%M%S') + '.npy'
-    filename = path + 'test' + datetime.now().strftime('%Y%m%d%H%M%S') + '.npy' # remove this line once testing is done
+    filename = path + 'image_' + datetime.now().strftime('%Y%m%d%H%M%S') + '.npy' # remove this line once testing is done
 
     with open(filename, 'wb') as f:
-        print(stream.array.shape)
         np.save(f, stream.array, allow_pickle=True)
 
     print(filename, 'written to file')
@@ -34,7 +33,7 @@ def save_image(stream, path):
 def preprocess_image():
     return None
 
-def run_model(model): #there is probably a conventional name for this
+def run_model(stream, model): #there is probably a conventional name for this
 
     coordinates = (0, 0) #TODO, obviously
     return coordinates
@@ -102,9 +101,13 @@ if __name__ == '__main__':
     print('\nready!')
     # main loop
     while True:
+        print('\a', end='') # make a noise to signal it's ready to go
         stream.truncate(0) #flushes the stream clean
         #button.wait_for_press()
         user_input = input("Press a key to take photo")
+        if user_input.lower() == 'exit':
+            break
+        
         #stream = capture_image(camera=camera)
         camera.capture(stream, 'rgb')
 
@@ -112,13 +115,12 @@ if __name__ == '__main__':
             sleep(1)
         else:
             preprocess_image()
-            run_model(model=model) 
+            run_model(stream=stream, model=model) 
 
         if save_mode:
             save_image(stream, path=up_path)
 
-        if user_input.lower() == 'exit':
-            break
+        
 
     camera.close()
 
