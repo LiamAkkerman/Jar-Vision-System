@@ -30,7 +30,7 @@ equal_grid.sort(key=exit_dist) # sort the list by how close to the exit the jars
 # fill in a dataset with each fullness of the tray
 coords = list()
 dataset = list()
-dataset.append({'image': np.zeros((tray_side, tray_side, 3), dtype=data_type), 'label': list(), 'filename': 'ideal_data_0', 'ideal': True}) # include an empty tray
+dataset.append({'image': np.zeros((tray_side, tray_side, 3), dtype=data_type), 'label': list(), 'filename': 'ideal_data_0', 'testing': True}) # include an empty tray
 while equal_grid:
         coords.append(equal_grid.pop()) # include one more jar each time, starting from furthest from 
         image = np.zeros((tray_side, tray_side, 3), dtype=data_type)
