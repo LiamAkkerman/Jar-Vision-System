@@ -106,6 +106,8 @@ for archive in archive_list:
             except ValueError:
                 pass 
 
+print('a list of', len(file_list), 'images remain')
+
 centres = list()
 markers = list()
 dataset = list()
@@ -132,8 +134,8 @@ while not done_flag:
         while len(pts) < 3 and not (next_image_flag or done_flag or undo_flag):
             point = list()
 
-            # point = plt.ginput(1, timeout=0.5)  # buttons will work right away but more resource heavy
-            point = plt.ginput(1, timeout=-1) # an extra click is needed to flush but better performance
+            point = plt.ginput(1, timeout=0.5)  # buttons will work right away but more resource heavy
+            # point = plt.ginput(1, timeout=-1) # an extra click is needed to flush but better performance
             
             if point: # conditional is just for timeout mode
                 point = point[0]
@@ -205,12 +207,12 @@ while not done_flag:
 
 # save dataset to file
 print('\nlabeled', len(dataset), 'images')
-#archive_filename = 'dataset/test_data.pkl.bz2'
-with bz2.BZ2File(archive_filename + '.pkl.bz2', mode='w') as f:
-    pickle.dump(dataset, f)
-print(archive_filename + '.pkl.bz2', 'saved')
-if exists(archive_filename + '_autosave.pkl.bz2') and exists(archive_filename + '.pkl.bz2'):
-    remove(archive_filename + '_autosave.pkl.bz2')
-    print('removed autosave')
+if len(dataset) > 0:
+    with bz2.BZ2File(archive_filename + '.pkl.bz2', mode='w') as f:
+        pickle.dump(dataset, f)
+    print(archive_filename + '.pkl.bz2', 'saved')
+    if exists(archive_filename + '_autosave.pkl.bz2') and exists(archive_filename + '.pkl.bz2'):
+        remove(archive_filename + '_autosave.pkl.bz2')
+        print('removed autosave')
 print('exiting')
 
