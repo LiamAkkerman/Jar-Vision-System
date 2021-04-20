@@ -11,6 +11,7 @@ It accepts the following options:
 | `--collect` | only collects images to add to dataset. Does not run the model | |
 | `--dry`  | Dry run. Do not save images | |
 | `--upload_path=/path` | upload images to `/path` | `/home/pi/images` |
+| `--model=filename` | Specify the tflite model file | `/home/pi/model.tflite` |
 
 ### Desktop
 `desktop/main.ipynb` is intended to run on a more powerful desktop. It trains the model. The model file needs to be moved to the Pi.
@@ -62,12 +63,12 @@ It accepts the following options:
 ### Build Model
  - read database and feed to Keras for training
  - develop a Keras model
- - save the model as an exportable format
-   - Keras can directly save a model
-   - TensorFlow Lite can save models for better performance
+ - ~~save the model as an exportable format~~
+   - ~~Keras can directly save a model~~
+   - ~~TensorFlow Lite can save models for better performance~~
 ### Run Model
- - install tensorflow on the pi in some regard
- - load model on the pi in python
- - run the model inference
+ - ~~install tensorflow on the pi in some regard~~
+ - ~~load model on the pi in python~~
+ - ~~run the model inference~~
  - output inference results
    - outputting to console is fine but a graphic will be better
