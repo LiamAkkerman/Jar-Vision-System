@@ -49,7 +49,7 @@ It accepts the following options:
  - ~~implement camera in software~~
  - ~~build camera jig~~
  - determine camera parameters
- - take tonnes of photos
+ - ~~take tonnes of photos~~
  - ~~if the size is getting too big, find method of compression~~
 ### Process Data
  - ~~develop way to process photos~~
@@ -59,13 +59,14 @@ It accepts the following options:
    - ~~pyplt can do this (but not in a jupyter notebook)~~
  - ~~develop method of storing the database of labeled images~~
    - ~~I think pickle will work for this in append binary mode~~
- - manually process all the photos
+ - ~~manually process all the photos~~
 ### Build Model
- - read database and feed to Keras for training
+ - ~~read database and feed to Keras for training~~
  - develop a Keras model
  - ~~save the model as an exportable format~~
    - ~~Keras can directly save a model~~
    - ~~TensorFlow Lite can save models for better performance~~
+ - convert model output into useable or meaningful data
 ### Run Model
  - ~~install tensorflow on the pi in some regard~~
  - ~~load model on the pi in python~~
