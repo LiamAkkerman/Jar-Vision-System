@@ -13,9 +13,10 @@
 \setlength{\parskip}{1em}
 \titlespacing{\section}{0pt}{\parskip}{-\parskip}
 \titlespacing{\subsection}{0pt}{\parskip}{-\parskip}
-\titlespacing{\subsubsection}{0pt}{\parskip}{-\parskip} %TODO adjust each of these once more text has been filled
+\titlespacing{\subsubsection}{0pt}{\parskip}{-\parskip} 
 \setlength{\cftbeforesecskip}{3pt}
 \setlength{\cftbeforesubsecskip}{0pt}
+%TODO adjust each of the above values after more text has been filled
 
 \usepackage{hyperref} 
 \hypersetup{
@@ -39,12 +40,34 @@
     \section{Introduction}
         \subsection{Problem Description}
             % jars need to move from loose in a tray to a conveyor belt
+            A group member, Liam, works doing industrial automation. A major system he works on involves jars being loaded into commercial washing trays to be put through a commercial dishwasher. An example of a washing tray may be seen in figure~\ref{fig:tray}. After the tray passes through the washing machine, the jars will have moved positions. Currently, a technician manually unloads the clean jars from the trays onto a conveyor belt to continue in the system. The goal of this project is to aid in the automation of this process.
 
-        \subsection{Project Limitations}
+            \begin{figure}[ht]
+                \centering
+                \includegraphics[height=6cm]{images/tray.jpg}
+                \caption{Commercial Dishwashing Tray}\label{fig:tray}
+            \end{figure}
+
+            A gentry robot may be implemented to pick up the jars out of the tray to move them. The advantage of this style of robot is it is versatile and robust in it's actions. It can move anywhere within a predefined space, enough to encompass the entire tray and the conveyor ingress. The gantry is only a system of actuators and control systems, it still requires a subsystem to target where the jars are and thus where to move the end effector. 
+            
+            A camera may be implemented as a vision system for jar targeting. This can be used to sense the location of each jar present waiting to be unloaded, and pass the coordinates to the gantry robot.
+
+        \subsection{Project Limitations}\label{sec:proj-limits}
             % needs to be on a rpi0. output meaningful for a targeting system.
+            As per the project description, the processer hardware used must be a Raspberry Pi Zero W (hereafter ``Rpi''). This is single-board computer uses an ARMv6 architecture with a single-core CPU and no GPU. There is one available USB OTG connection. It has available and accessible GPIO and power pins. There is a connection for a CSI camera\cite{rpi}. 
+
+            It was indicated in lecture that projects should include data collection via sensors connected to the Rpi as well as constructing the models. This greatly increases the project scope. Very large datasets are available  from open online sources. By using existing datasets, groups could have yielded interesting projects without needing to divert effort to anything other than than creating the models.
+            
+            % TODO any other limitations? specific issue will be discussed later in methodology
 
         \subsection{Design Philosophy}
-            % ehhh I dunno. big data = good data.
+            As we are currently training as Mechatronic Systems Engineers, we opted to take a holistic system based approach. This meant splitting the project in discrete subsystems and focusing on the integrations between systems, including subsystems before and after the scope of this project. This allowed us to create a project which was easily integrated into the existing industrial system and process. 
+
+            It was decided that data collection will be a crucial step in this project. Without a sufficient dataset to train with, no matter the quality of the model, the results will be poor. Garbage in, garbage out. Great effort was put into data collection and labelling.
+
+            \textbf{Input}: An unencoded image from a camera of the jars in a tray.
+
+            \textbf{Output}: A list of coordinates, a spatial map of jar locations, or a single jar's coordinates. %TODO keep whichever it is
 
     \FloatBarrier
     \section{Methodology}
@@ -92,7 +115,12 @@
     \FloatBarrier
     \section{Conclusion}
 
+    \FloatBarrier
     \appendix
+    
+	\bibliographystyle{ieeetr}
+	\bibliography{bib}\addcontentsline{toc}{section}{Referances}
+
 	\section{List of Figures}
 		\makeatletter
 		\@starttoc{lof}% Print List of Figures
@@ -102,7 +130,5 @@
 		\makeatletter
 		\@starttoc{lot}% Print List of Tables
 		\makeatother
-    
-    \section{References}
 
 \end{document}
