@@ -1,0 +1,108 @@
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{graphics}
+\usepackage{graphicx}
+\usepackage[margin=3cm]{geometry}
+\usepackage{placeins}
+
+\usepackage{titlesec}
+\usepackage[titles]{tocloft}
+\linespread{1.25}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1em}
+\titlespacing{\section}{0pt}{\parskip}{-\parskip}
+\titlespacing{\subsection}{0pt}{\parskip}{-\parskip}
+\titlespacing{\subsubsection}{0pt}{\parskip}{-\parskip} %TODO adjust each of these once more text has been filled
+\setlength{\cftbeforesecskip}{3pt}
+\setlength{\cftbeforesubsecskip}{0pt}
+
+\usepackage{hyperref} 
+\hypersetup{
+    colorlinks   = true,
+    urlcolor     = blue,
+    linkcolor    = black
+}
+
+\title{{\large MSE491 - Application of Machine Learning in Mechatronic Systems} \\ Project Report: \\ Vessel Targeting System for Automated Gantry Robot}
+\author{Group 25 \\ Liam Akkerman - 301286906 \\ Aidan Hunter - 301279938}
+
+\begin{document}
+    \maketitle
+    \vfill
+	\setcounter{tocdepth}{2} % only include down to subsections
+    \tableofcontents % could move to new page if too long
+    \FloatBarrier 
+    \newpage
+
+    \FloatBarrier
+    \section{Introduction}
+        \subsection{Problem Description}
+            % jars need to move from loose in a tray to a conveyor belt
+
+        \subsection{Project Limitations}
+            % needs to be on a rpi0. output meaningful for a targeting system.
+
+        \subsection{Design Philosophy}
+            % ehhh I dunno. big data = good data.
+
+    \FloatBarrier
+    \section{Methodology}
+        \subsection{Data Collection}
+            \subsubsection{Camera Frame}
+                % physical frame the camera and pi are mounted on
+
+            \subsubsection{Database}
+                % storing all the data points
+
+            \subsubsection{Data Point Labelling}
+                % taking photos and the GUI program
+
+        \subsection{Machine Learning Model}
+            % the Keras and other ML stuff
+            \subsubsection{Data Augmentation} % maybe this should be in data collection
+                % bolstering the data set with image transformations 
+
+            \subsubsection{Keras Model Layers}
+                % describing each layer in the model
+
+        \subsection{Project Implementation and Integration}
+            % how we got it to run on our hardware and how it will be integrated with the next subsystem
+            \subsubsection{Tensor Flow on the Raspberry Pi}
+                % how it got installed on armv6 and the tflite model exporting/importing
+
+            \subsubsection{Raspberry Pi Program}
+                % the program which executes on the pi. uses a pi camera to take and store photos for training. invokes the model when in use. full command line control possible.
+
+            \subsubsection{Deriving Meaningful Data from the Model}
+                % I don't know this yet
+
+    \FloatBarrier
+    \section{Results}
+        \subsection{Example Results}
+            % pictures visualizing the output of sample data
+
+        \subsection{Results Metrics}
+            % measurements quantifying the results
+    
+    \FloatBarrier
+    \section{Discussions}
+        % lots of graphs
+
+    \FloatBarrier
+    \section{Conclusion}
+
+    \appendix
+	\section{List of Figures}
+		\makeatletter
+		\@starttoc{lof}% Print List of Figures
+		\makeatother
+
+	\section{List of Tables}
+		\makeatletter
+		\@starttoc{lot}% Print List of Tables
+		\makeatother
+    
+    \section{References}
+
+\end{document}
