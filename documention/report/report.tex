@@ -1,4 +1,5 @@
 \documentclass[11pt]{article}
+%\documentclass[11pt]{ieeetran} % this might earn us some favour but breaks a few small things like page breaks
 
 \usepackage[utf8]{inputenc}
 \usepackage{graphics}
@@ -9,7 +10,7 @@
 
 \usepackage{titlesec}
 \usepackage[titles]{tocloft}
-\linespread{1.25}
+\linespread{1.15}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{1em}
 \titlespacing{\section}{0pt}{\parskip}{-\parskip}
@@ -23,6 +24,7 @@
 \hypersetup{
     colorlinks   = true,
     urlcolor     = blue,
+    citecolor    = black,
     linkcolor    = black
 }
 
@@ -39,6 +41,7 @@
 
     \FloatBarrier
     \section{Introduction}
+        Our code may be found on our GitHub repository~\cite{akkerman_hunter}. % TODO there must be a better place for this sentance
         \subsection{Problem Description}
             % jars need to move from loose in a tray to a conveyor belt
             A group member, Liam, works doing industrial automation. A major system he works on involves jars being loaded into commercial washing trays to be put through a commercial dishwasher. An example of a washing tray may be seen in figure~\ref{fig:tray}. After the tray passes through the washing machine, the jars will have moved positions. Currently, a technician manually unloads the clean jars from the trays onto a conveyor belt to continue in the system. The goal of this project is to aid in the automation of this process.
@@ -98,7 +101,7 @@
                     \caption{The labelling program interface}\label{fig:label-gui}
                 \end{figure}
 
-                The interface was created with MatPlotLib, a graphing and visualization library for Python. To summarize how to use it, the user clicks on three points of the rim of a jar. Using equations~\ref{eq:x_0} through~\ref{eq:r}, the centre and radius is determined mathematically. A full user guide is present on the readme of the GitHub page. \(M_{i,j}\) is the \((i,j)\) minor from linear algebra. 
+                The interface was created with MatPlotLib, a graphing and visualization library for Python. To summarize how to use it, the user clicks on three points of the rim of a jar. A full user guide is present on the readme of the GitHub page~\cite{akkerman_hunter}. Using equations~\ref{eq:x_0} through~\ref{eq:r}, the centre and radius is determined mathematically.  \(M_{i,j}\) is the \((i,j)\) minor from linear algebra of a matrix of the points chosen by the user. The original math was described by Stephen R. Schmitt~\cite{schmitt}.
 
                 \begin{align}
                     x_0 &= \frac{1}{2} \cdot \frac{M_{1,2}}{M_{1,1}} \label{eq:x_0}\\
@@ -112,11 +115,11 @@
                 % storing all the data points
                 Given that our training data is images, the dataset had the potential to require massive amounts of storage and the surrounding infrastructure. Implementing a MySQL database was considered but opted against. The work required to initialise the container, expose it safely for us both work with it, and the additional learning required to integrate it with Python was deemed too great for the minimal benefits at our prospective scale. This would be a more future-proof solution, but was excessive for our use.
 
-                What was used was simple a list of dictionaries pickled then compressed into several archive files. This is a normal means of small-scale data storage in Python. This gave us to advantages of each data point having several different types of data, all listed under their respective key. Using multiple archive files allowed pushing/uploading them to GitHub with only free accounts. Each data point contained the unencoded RGB image, a list of jar centre coordinates, the filename of the origonal
+                What was used was simple a list of dictionaries pickled then compressed into several archive files. This is a normal means of small-scale data storage in Python. This gave us to advantages of each data point having several different types of data, all listed under their respective key. Using multiple archive files allowed pushing/uploading them to GitHub with only free accounts. Each data point contained the unencoded RGB image, a list of jar centre coordinates, the filename of the original
                 
                 Several compression methods were experimented with. Of those, Lempel–Ziv–Markov chain algorithm (LZMA) was found to preform the fastest. bzip2 was, unexpectedly, found to have the greatest compression, roughly 25\% better than LZMA but was slightly slower. Deflate was found to have no benefits over LZMA or bzip2. bzip2 was chosen because the speed was still acceptable along with the better compression.
 
-        \subsection{Machine Learning Model}
+        \subsection{Machine Learning Model}\label{sec:ml}
             % the Keras and other ML stuff
             \subsubsection{Data Augmentation} % maybe this should be in data collection
                 % bolstering the data set with image transformations 
@@ -127,13 +130,21 @@
         \subsection{Project Implementation and Integration}
             % how we got it to run on our hardware and how it will be integrated with the next subsystem
             \subsubsection{Tensor Flow on the Raspberry Pi}
-                % how it got installed on armv6 and the tflite model exporting/importing
+                % how it got installed on armv6
+                As mentioned in section~\ref{sec:proj-limits}, the Rpi uses ARMv6 architecture. This architecture is not officially supported by Tensor Flow (being 32-bit is fine). Using the standard pip install would not suffice and led to dependency issues or attempting unavailable processor instructions. Several methods were attempted to get a runtime installed on the Rpi which could run a model created using Keras. These including hunting a long list of dependencies and tracking down specific versions, attempting to compile from source, and using a myriad of outdated versions and prebuilt binaries. 
+                
+                The ultimate solution came in the form of a ``pip wheel'', a means of package distribution. It was created by GitHub user lhelontra~\cite{lontra}. This package successfully installed Tensor Flow 2.4 and the required dependencies and libraries onto the Rpi.
+
+            \subsubsection{Exporting and Importing Models}
+                % tflite model exporting/importing
+                The model was trained on a more powerful desktop computer, as described in section~\ref{sec:ml}. The model then needed to be exported for use on the Rpi. Keras can directly save models. Another approach, which is what we used, is the TensorFlow Lite runtime library. This library is intended for this exact scenario, where a model is created elsewhere and then ran on a less powerful device. This worked well and allowed us to save a model from a desktop and run the inference on the Rpi with ease. If it TensorFlow was natively compatible with the Rpi, it is likely that only Tensor Flow Lite would need to be installed on the Rpi, rather than the entire Tensor Flow suite.
 
             \subsubsection{Raspberry Pi Program}
                 % the program which executes on the pi. uses a pi camera to take and store photos for training. invokes the model when in use. full command line control possible.
+                A Python program was written to run on the Rpi. The main purpose was to pass sensor information from the camera to the trained model to receive the jar coordinates \textbf{TODO} or whatever it is. The same program was also used to collect the data to be labelled for training. Unless specified otherwise, the program saves any new images so a human may label them at a later time. The program may be launched with specific settings by passing arguments in the command line. A full user guide may be found on our GitHub readme file~\cite{akkerman_hunter}.
 
             \subsubsection{Deriving Meaningful Data from the Model}
-                % I don't know this yet
+                % I don't know this yet. how the information is converted into something the robot can use.
 
     \FloatBarrier
     \section{Results}
@@ -153,7 +164,7 @@
     \FloatBarrier
     \appendix
     
-	\bibliographystyle{ieeetr}
+	\bibliographystyle{IEEEtran}
 	\bibliography{bib}\addcontentsline{toc}{section}{Referances}
 
 	\section{List of Figures}
