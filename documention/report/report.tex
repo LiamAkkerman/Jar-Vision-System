@@ -111,7 +111,7 @@
 
                 There were issue in development with blocking inputs, sending interrupts from the buttons, and a memory leak. All of which were solved. After the images were labelled, the image, labels, and other information would be stored in a database.
 
-            \subsubsection{Database}
+            \subsubsection{Database Storage}
                 % storing all the data points
                 Given that our training data is images, the dataset had the potential to require massive amounts of storage and the surrounding infrastructure. Implementing a MySQL database was considered but opted against. The work required to initialise the container, expose it safely for us both work with it, and the additional learning required to integrate it with Python was deemed too great for the minimal benefits at our prospective scale. This would be a more future-proof solution, but was excessive for our use.
 
@@ -121,8 +121,17 @@
 
         \subsection{Machine Learning Model}\label{sec:ml}
             % the Keras and other ML stuff
-            \subsubsection{Data Augmentation} % maybe this should be in data collection
+            \subsubsection{Data Augmentation}\label{sec:aug}
                 % bolstering the data set with image transformations 
+                Data augmentation is a technique used to bolster the training set without the need for additional data collection. There is built-in layers in Keras to preform augmentation of images via rotating, flipping, and cropping. This methods are intended for use in classification as they do not similarly transform the labels, so they were not valid for our use. Instead, we opted to design our own augmentation routine comprised only of flipping and rotating.
+
+                By rotating each image to each of the four cardinal directions, and then flipping along four different axes, it would increase the amount of labelled data by a factor of 16. This, however, consumed a tremendous amount of memory in the process. More detail regarding memory may be found in section~\ref{sec:memory}. As a compromise, both rotations and flips were preformed, but not combined. This lead to a factor of 8 times increase in data while still remaining confined in available memory. Increasing the training data size greatly increased training time to a point where is is unfeasible to do so without a GPU.
+                
+            \subsubsection{Dataset Management}\label{sec:memory}
+                % memory issues and types
+                After the addition of data augmentation (section~\ref{sec:aug}), the far greater amount of data required a exorbitant amount of memory (RAM) to store. Initially, the input and label data were being stored as NumPy arrays. These have the disadvantage of needing to be stored entirely in RAM for the duration of their life. While using all permeations of data augmentation, Python would crash citing the need for an additional 19 GiB of memory. This was not feasible as no group member has such a computer. In an attempt to relegate the data to be stored on the disk (technically, a solid-state drive) rather than memory, a Tensor Flow Dataset was employed. 
+
+                This type of dataset is designed for this exact purpose. It is possible to read the training data from the disk at the time of training and only enough for the batch being used. This method was not utilized to it's fullest, given time constraints. The possible prefetching or using the better memory managed TFRecord instead of NumPy arrays was not implemented. It was not exactly measured, but empirically it did seem to use less memory and more disk I/O after switching to the TF Dataset, indicating some level of caching on the disk was happening.
 
             \subsubsection{Keras Model Layers}
                 % describing each layer in the model
@@ -160,6 +169,10 @@
 
     \FloatBarrier
     \section{Conclusion}
+
+    \FloatBarrier
+    \section{Other}
+        \subsection{Work Delegation}
 
     \FloatBarrier
     \appendix
